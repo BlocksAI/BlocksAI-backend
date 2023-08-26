@@ -1,5 +1,4 @@
 import importlib
-import json
 
 from langchain.document_loaders import TextLoader
 from langchain.indexes import VectorstoreIndexCreator
@@ -12,15 +11,14 @@ def blockPicker(user_prompt: str) -> tuple[str, int]:
     loader = TextLoader('DB.csv')
     index = VectorstoreIndexCreator().from_loaders([loader])
     
-    return index.query(prompt_for_gateway), 200
+    return {
+            "chosen_block": index.query(prompt_for_gateway)
+        }, 200
     
 
 def json_encode_chat_history(chat_history):
     result = []
     for msg in chat_history:
-        print(f"TYPE: {type(msg)}")
-        print(f"MSG : {msg}")
-        print()
         msg_type = "SYSTEM"
         if type(msg) == HumanMessage:
             msg_type = "HUMAN"

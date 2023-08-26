@@ -1,14 +1,17 @@
 import os
+import pymysql
+pymysql.install_as_MySQLdb()
 
 from dotenv import load_dotenv
 from datetime import datetime
 from flask import Flask
 from db import db
+from models.Block import Blocks
+from models.User import Users
 
 from routes.GatewayRoutes import gateway_bp
 from routes.UserRoutes import user_bp
 from routes.BlockRoutes import block_bp
-
 
 load_dotenv()
 
@@ -39,4 +42,7 @@ app.register_blueprint(block_bp, url_prefix='/blocks')
 
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+        print("Tables created!")
     app.run(debug=True, port=5001)
