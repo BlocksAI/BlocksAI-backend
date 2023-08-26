@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
 from controller.BlockController import *
 
 
@@ -12,4 +12,9 @@ def all_blocks():
 @block_bp.route('/create', methods=['POST'])
 def new_block():
     data = request.get_json()
-    return create_new_block(data['block_name'], data['description'])
+    return create_new_block(
+        current_app,
+        data['block_name'],
+        data['description'],
+        data['category']
+    )
