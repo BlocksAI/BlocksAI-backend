@@ -44,7 +44,7 @@ app.register_blueprint(block_bp, url_prefix='/blocks')
 
 
 if __name__ == '__main__':
-    # with app.app_context():
-    #     db.create_all()
-    #     print("Tables created!")
+    with app.app_context():
+        db.create_all()
+        print("Tables created!")
     app.run(host = "0.0.0.0", debug=True, port=5001)
