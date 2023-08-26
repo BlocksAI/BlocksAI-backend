@@ -12,10 +12,33 @@ from langchain.tools import BaseTool
 if __name__ == '__main__':
     load_dotenv()
 
+
+'''
+THESE ARE THE BASE TEMPLATE CODE FOR DEVELOPERS:
+'''
 llm = ChatOpenAI(
     temperature=0,
     model_name='gpt-3.5-turbo'
 )
+
+# Create agent memory
+memory = ConversationBufferWindowMemory(
+    memory_key='chat_history',
+    return_messages=True
+)
+
+# Function for backend to inject persisted chat-memory
+def inject_chat_history(chat_history):
+    for i in range(0, len(chat_history), 2):
+        human_msg = chat_history[i]
+        ai_msg = chat_history[i + 1]
+        memory.save_context({"input": human_msg}, {"output": ai_msg})
+    print("Injected chat history from DB")
+
+
+'''
+DEVELOPERS WILL WRITE CUSTOM FUNCTIONS FOR CUSTOM TOOLS BELOW:
+'''
 
 # In-built search tool
 search = DuckDuckGoSearchRun()
@@ -39,12 +62,10 @@ tools = [
     )
 ]
 
-# Create agent memory
-memory = ConversationBufferWindowMemory(
-    memory_key='chat_history',
-    return_messages=True
-)
 
+'''
+THESE ARE THE BASE TEMPLATE CODE FOR DEVELOPERS:
+'''
 # Initialise agent
 new_block = initialize_agent(
     agent='chat-conversational-react-description',

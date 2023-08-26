@@ -8,6 +8,11 @@ class ChatHistory(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     message_type = db.Column(db.String(10), nullable=False)
+    
+    @staticmethod
+    def get_history_by_block_id_user_id(block_id, user_id):
+        history = ChatHistory.query.filter_by(user_id=user_id, block_id=block_id).all()
+        return [msg.message for msg in history]
 
     @staticmethod
     def add_new_record(app, new_chat_history):

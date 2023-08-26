@@ -56,11 +56,19 @@ def querySpecificBlock(app, block_name: str, user_prompt: str):
     
     block_id = Blocks.get_block_id_by_block_name(block_name)
     
+    # If user is not subscribed to this block, exit
     if not UserBlocks.query.filter_by(user_id=1, block_id=block_id).all():
         return { "error": f"User is not subscribed to {block_name}" }, 403
     
     # Import the new block
     block = importlib.import_module('agents.' + block_name)
+    
+    db_chat_history = ChatHistory.get_history_by_block_id_user_id(block_id, 1)
+    print("CHAT HIST:", db_chat_history)
+    
+    # Inject chat memory from DB (as required)
+    if not block.memory.buffer:
+        block.inject_chat_history(db_chat_history)
     
     # Execute the prompt using the chosen block
     response = block.new_block(user_prompt)
