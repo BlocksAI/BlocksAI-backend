@@ -8,6 +8,8 @@ from flask import Flask
 from db import db
 from models.Block import Blocks
 from models.User import Users
+from models.UserBlock import UserBlocks
+from models.ChatHistory import ChatHistory
 
 from routes.GatewayRoutes import gateway_bp
 from routes.UserRoutes import user_bp
