@@ -6,13 +6,25 @@ from langchain.schema.messages import HumanMessage, AIMessage, SystemMessage
 
 from models.ChatHistory import ChatHistory
 from models.Block import Blocks
+from models.UserBlock import UserBlocks
+
+
+def write_to_csv(blocks):
+    with open('all_blocks.csv', 'w') as o:
+        o.write('AgentName;AgentDescription\n')
+        for block in blocks:
+            o.write(f"{block['block_name']};{block['description']}\n")
+        o.write('MarketplaceQuery;This agent is useful when none of the rest of the agents can be used to help with the prompt\n')
 
 
 def blockPicker(user_prompt):
     prompt_for_gateway = f"Which of the agents can be used for this prompt: '{user_prompt}'?"
     
-    # TODO: Read blocks available from DB
-    loader = TextLoader('DB.csv')
+    # Read blocks available from DB
+    write_to_csv(Blocks.get_all_blocks())
+    
+    # Let language model decide which block to use
+    loader = TextLoader('all_blocks.csv')
     index = VectorstoreIndexCreator().from_loaders([loader])
     
     return { "chosen_block": index.query(prompt_for_gateway) }, 200
@@ -41,7 +53,11 @@ def new_chat_history(app, block_name, msg, msg_type):
 
 
 def querySpecificBlock(app, block_name: str, user_prompt: str):
-    # TODO: Check if the user has subscribed to the block
+    
+    block_id = Blocks.get_block_id_by_block_name(block_name)
+    
+    if not UserBlocks.query.filter_by(user_id=1, block_id=block_id).all():
+        return { "error": f"User is not subscribed to {block_name}" }, 403
     
     # Import the new block
     block = importlib.import_module('agents.' + block_name)

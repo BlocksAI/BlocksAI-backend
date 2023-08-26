@@ -14,6 +14,14 @@ class Blocks(db.Model):
             "description": self.description,
             "category": self.category
         }
+        
+    @staticmethod
+    def get_all_blocks():
+        return [block.to_json() for block in Blocks.query.all()]
+        
+    @staticmethod
+    def get_block_id_by_block_name(block_name):
+        return Blocks.query.filter_by(block_name=block_name).all()[0].block_id
 
     @staticmethod
     def create_new_block(app, new_block):

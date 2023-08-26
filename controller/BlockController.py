@@ -3,7 +3,7 @@ from models.Block import Blocks
 from models.UserBlock import UserBlocks
 
 def get_all_blocks():
-    return [block.to_json() for block in Blocks.query.all()], 200
+    return Blocks.get_all_blocks(), 200
 
 
 def create_new_block(app, block_name: str, description: str, category: str):
@@ -35,6 +35,10 @@ def manufacture_new_block(agent_file):
 
 
 def subscribe_to_block(app, block_id: int, username: str):
+    # If block_id is invalid, exit
+    if not Blocks.query.filter_by(block_id=block_id).all():
+        return { "error": "Invalid Block ID!" }, 400
+    
     # If user already subscribed to block, exit
     if UserBlocks.query.filter_by(block_id=block_id, user_id=1).all():
         return { "error": "User already subscribed to this block!" }, 400
@@ -58,6 +62,10 @@ def subscribe_to_block(app, block_id: int, username: str):
 
 
 def unsubscribe_to_block(block_id: int, username: str):
+    # If block_id is invalid, exit
+    if not Blocks.query.filter_by(block_id=block_id).all():
+        return { "error": "Invalid Block ID!" }, 400
+    
     # Query for user_id by username
     user_id = Users.get_user_id_by_username(username)
     
