@@ -1,0 +1,5 @@
+AgentName;AgentDescription
+PersonalEducationPlanner;This agent will help with tasks that involves planning of personal education timetables, showing of grades history, or finding extra learning resources or assessment papers online
+SymptomsChecker;This agent is useful when there is a prompt regarding healthcare, where the user wants to check what are some possible diagnoses given some of the symptoms the user provide
+CarbonFootprintTracker;This agent will track how much carbon footprint the user is producing given their daily activities
+MarketplaceQuery;This agent is useful when none of the rest of the agents can be used to help with the prompt

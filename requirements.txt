@@ -1,0 +1,11 @@
+streamlit
+python-dotenv
+langchain
+openai
+tabulate
+chromadb
+tiktoken
+flask
+Flask-SQLAlchemy
+mysqlclient
+duckduckgo-search
