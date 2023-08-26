@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
 from controller.GatewayController import *
 
 
@@ -16,4 +16,4 @@ def run_chosen_block():
     data = request.get_json()
     block_name = data['block_name']
     user_prompt = data['user_prompt']
-    return querySpecificBlock(block_name, user_prompt)
+    return querySpecificBlock(current_app, block_name, user_prompt)
