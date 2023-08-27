@@ -7,6 +7,7 @@ from langchain.schema.messages import HumanMessage, AIMessage, SystemMessage
 from models.ChatHistory import ChatHistory
 from models.Block import Blocks
 from models.UserBlock import UserBlocks
+from models.BlockData import BlockData
 
 
 def write_to_csv(blocks):
@@ -65,11 +66,17 @@ def querySpecificBlock(app, block_name: str, user_prompt: str):
     
     db_chat_history = ChatHistory.get_history_by_block_id_user_id(block_id, 1)
     print("CHAT HIST:", db_chat_history)
-    
+
+
     # Inject chat memory from DB (as required)
     if not block.memory.buffer:
         block.inject_chat_history(db_chat_history)
+
+    db_block_data = BlockData.get_block_by_block_id_user_id(block_id, 1)
+    print("Block Data Files:", db_block_data)
     
+    block.files=[file.block_file for file in db_block_data]
+
     # Execute the prompt using the chosen block
     response = block.new_block(user_prompt)
     
@@ -84,4 +91,20 @@ def querySpecificBlock(app, block_name: str, user_prompt: str):
         "input": response['input'],
         "output": response['output'],
         "chat_history": json_encode_chat_history(response['chat_history'])
+    }, 201
+
+def addFileToBlock(current_app,dic):
+    if "block_file" not in dic or "block_id" not in dic or "user_id" not in dic:
+        return { "error": "Please enter the block_file, block_id and user_id" }, 400
+    
+    new_user_block = BlockData(
+        block_file=dic["block_file"],
+        block_id=dic["block_id"],
+        user_id=dic["user_id"],
+    )
+
+    BlockData.add_new_record(current_app,new_user_block)
+
+    return {
+        "Result": "Successfully added file to block"
     }, 201
