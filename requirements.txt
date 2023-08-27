@@ -9,3 +9,5 @@ flask
 Flask-SQLAlchemy
 mysqlclient
 duckduckgo-search
+PyMySQL
+cryptography
