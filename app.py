@@ -47,4 +47,11 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         print("Tables created!")
+        
+        # Seed user (1, "bobby", "123456")
+        if not Users.query.filter_by(username="bobby").all():
+            db.session.add(Users(username="bobby", password="123456"))
+            db.session.commit()
+            print("User 'bobby' seeded")
+            
     app.run(host = "0.0.0.0", debug=False, port=5001)
