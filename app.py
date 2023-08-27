@@ -21,8 +21,6 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD')
 DB_HOSTNAME = os.environ.get('DB_HOSTNAME')
 DB_SCHEMA = os.environ.get('DB_SCHEMA')
 
-print(DB_USERNAME)
-
 # Set up server
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}/{DB_SCHEMA}"
@@ -44,7 +42,7 @@ app.register_blueprint(block_bp, url_prefix='/blocks')
 
 
 if __name__ == '__main__':
-    # with app.app_context():
-    #     db.create_all()
-    #     print("Tables created!")
+    with app.app_context():
+        db.create_all()
+        print("Tables created!")
     app.run(host = "0.0.0.0", debug=True, port=5001)
