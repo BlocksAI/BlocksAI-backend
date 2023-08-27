@@ -10,6 +10,7 @@ class Blocks(db.Model):
     def to_json(self):
         print("Encoding the json")
         return {
+            "block_id": self.block_id,
             "block_name": self.block_name,
             "description": self.description,
             "category": self.category
