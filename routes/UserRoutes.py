@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from controller.UserController import (
     login,
-    register
+    register,
+    get_chat_history
 )
 
 # Create a blueprint for app to register
@@ -18,3 +19,7 @@ def login_user():
 def register_user():
     data = request.get_json()
     return register(data['username'], data['password'], data['role'])
+
+@user_bp.route('/<user_id>/chat-history', methods=['GET'])
+def user_chat_history(user_id):
+    return get_chat_history(user_id)

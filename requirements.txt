@@ -11,3 +11,4 @@ mysqlclient
 duckduckgo-search
 PyMySQL
 cryptography
+flask-cors

@@ -5,6 +5,7 @@ pymysql.install_as_MySQLdb()
 from dotenv import load_dotenv
 from datetime import datetime
 from flask import Flask
+from flask_cors import CORS
 from db import db
 from models.Block import Blocks
 from models.User import Users
@@ -31,6 +32,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{D
 db.init_app(app)
 print(f"[{datetime.now()} SERVER] Connected to DB!")
 
+# Enable CORS
+CORS(app)
 
 # Health Check route
 @app.route('/')

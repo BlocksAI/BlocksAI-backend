@@ -9,6 +9,12 @@ class ChatHistory(db.Model):
     message = db.Column(db.Text, nullable=False)
     message_type = db.Column(db.String(10), nullable=False)
     
+    def to_json(self):
+        return {
+            "message_type": self.message_type,
+            "message": self.message
+        }
+    
     @staticmethod
     def get_history_by_block_id_user_id(block_id, user_id):
         history = ChatHistory.query.filter_by(user_id=user_id, block_id=block_id).all()
