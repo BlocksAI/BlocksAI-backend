@@ -23,8 +23,6 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD')
 DB_HOSTNAME = os.environ.get('DB_HOSTNAME')
 DB_SCHEMA = os.environ.get('DB_SCHEMA')
 
-print(DB_USERNAME)
-
 # Set up server
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}/{DB_SCHEMA}"
