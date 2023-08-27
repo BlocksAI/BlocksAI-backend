@@ -23,8 +23,6 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD')
 DB_HOSTNAME = os.environ.get('DB_HOSTNAME')
 DB_SCHEMA = os.environ.get('DB_SCHEMA')
 
-print(DB_USERNAME)
-
 # Set up server
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOSTNAME}/{DB_SCHEMA}"
@@ -49,4 +47,11 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         print("Tables created!")
+        
+        # Seed user (1, "bobby", "123456")
+        if not Users.query.filter_by(username="bobby").all():
+            db.session.add(Users(username="bobby", password="123456"))
+            db.session.commit()
+            print("User 'bobby' seeded")
+            
     app.run(host = "0.0.0.0", debug=False, port=5001)
