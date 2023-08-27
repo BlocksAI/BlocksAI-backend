@@ -1,3 +1,4 @@
 AgentName;AgentDescription
 PersonalEducationPlanner;This agent will help with tasks that involves planning of personal education timetables, showing of grades history, or finding extra learning resources or assessment papers online
+PythonMathSolver;This agent will help with tasks that involves solving math questions using python
 MarketplaceQuery;This agent is useful when none of the rest of the agents can be used to help with the prompt

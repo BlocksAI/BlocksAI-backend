@@ -12,3 +12,6 @@ duckduckgo-search
 PyMySQL
 cryptography
 flask-cors
+requests-toolbelt
+PyPDF2
+faiss-cpu
