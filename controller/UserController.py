@@ -11,3 +11,9 @@ def register(username, password, role):
 
 def get_chat_history(user_id):
     return [chat.to_json() for chat in ChatHistory.query.filter_by(user_id=user_id).all()], 200
+
+def manufacture_new_block(user_file):
+    # Download file to /agents directory
+    file_path = f"agents/{user_file.filename}"
+    user_file.save(file_path)
+    return { "status": "User file successfully uploaded!" }, 201
