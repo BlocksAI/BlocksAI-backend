@@ -55,6 +55,12 @@ if __name__ == '__main__':
         if not Users.query.filter_by(username="bobby").all():
             db.session.add(Users(username="bobby", password="123456"))
             db.session.commit()
-            print("User 'bobby' seeded")
+            print(f"[{datetime.now()} SERVER] User 'bobby' seeded")
+            
+        # Seed default block (1, "OnlineSearch", "This agent is useful when none of the rest of the agents can be used to help with the prompt", "Misc")
+        if not Blocks.query.filter_by(block_name="OnlineSearch").all():
+            db.session.add(Blocks(block_id=1,block_name="OnlineSearch", description="This agent is useful when none of the rest of the agents can be used to help with the prompt", category="Misc"))
+            db.session.commit()
+            print(f"[{datetime.now()} SERVER] Block 'OnlineSearch' created")
             
     app.run(host = "0.0.0.0", debug=False, port=5001)

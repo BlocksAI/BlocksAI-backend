@@ -14,12 +14,13 @@ def write_to_csv(blocks):
     with open('all_blocks.csv', 'w') as o:
         o.write('AgentName;AgentDescription\n')
         for block in blocks:
-            o.write(f"{block['block_name']};{block['description']}\n")
-        o.write('MarketplaceQuery;This agent is useful when none of the rest of the agents can be used to help with the prompt\n')
+            if block['block_name'] != 'OnlineSearch':
+                o.write(f"{block['block_name']};{block['description']}\n")
+        o.write('OnlineSearch;This agent is useful when none of the rest of the agents can be used to help with the prompt\n')
 
 
 def blockPicker(user_prompt):
-    prompt_for_gateway = f"Which of the agents can be used for this prompt: '{user_prompt}'?"
+    prompt_for_gateway = f"Which of the agents can be used for this prompt: '{user_prompt}'? Return only the name of the agent."
     
     # Read blocks available from DB
     write_to_csv(Blocks.get_all_blocks())
@@ -54,27 +55,29 @@ def new_chat_history(app, block_name, msg, msg_type):
 
 
 def querySpecificBlock(app, block_name: str, user_prompt: str):
-    
     block_id = Blocks.get_block_id_by_block_name(block_name)
     
+    # If block does not exists, search the web
+    if not block_id:
+        block_id, block_name = 1, 'OnlineSearch'
+    
     # If user is not subscribed to this block, exit
-    if not UserBlocks.query.filter_by(user_id=1, block_id=block_id).all():
-        return { "error": f"User is not subscribed to {block_name}" }, 403
+    if block_name != 'OnlineSearch' and not UserBlocks.query.filter_by(user_id=1, block_id=block_id).all():
+        return {
+            "input": user_prompt,
+            "output": f"You can subscribe to {block_name} on the Blocks Marketplace!"
+        }, 200
     
     # Import the new block
     block = importlib.import_module('agents.' + block_name)
     
-    db_chat_history = ChatHistory.get_history_by_block_id_user_id(block_id, 1)
-    print("CHAT HIST:", db_chat_history)
-
-
     # Inject chat memory from DB (as required)
+    db_chat_history = ChatHistory.get_history_by_block_id_user_id(block_id, 1)
     if not block.memory.buffer:
         block.inject_chat_history(db_chat_history)
 
+    # Attach any required block files to block
     db_block_data = BlockData.get_block_by_block_id_user_id(block_id, 1)
-    print("Block Data Files:", db_block_data)
-    
     block.files=[file.block_file for file in db_block_data]
 
     # Execute the prompt using the chosen block
@@ -87,11 +90,18 @@ def querySpecificBlock(app, block_name: str, user_prompt: str):
     except:
         return { "error": "Chat history not recorded" }, 400
     
+    # Check if there is html template to be returned
+    html_template = None
+    if "</" in response['output']:
+        html_template = response['output']
+    
     return {
         "input": response['input'],
+        "html": html_template,
         "output": response['output'],
         "chat_history": json_encode_chat_history(response['chat_history'])
     }, 201
+
 
 def addFileToBlock(current_app,dic):
     if "block_file" not in dic or "block_id" not in dic or "user_id" not in dic:

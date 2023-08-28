@@ -22,7 +22,10 @@ class Blocks(db.Model):
         
     @staticmethod
     def get_block_id_by_block_name(block_name):
-        return Blocks.query.filter_by(block_name=block_name).all()[0].block_id
+        blocks = Blocks.query.filter_by(block_name=block_name).all()
+        if not blocks:
+            return None
+        return blocks[0].block_id
 
     @staticmethod
     def create_new_block(app, new_block):
